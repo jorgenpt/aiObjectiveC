@@ -27,3 +27,17 @@ know!
 Finally, aiObjectiveC is meant as a starting ground for people wanting to write
 OpenGL apps for Mac / iOS that leverage assimp. You might not want to use my
 library verbatim, but hopefully it'll help you get started!
+
+
+License
+=======
+
+aiObjectiveC is licensed under the BSD license, see the file "LICENSE" that
+should be shipped alongside this readme.
+
+You are free to do as you please with aiObjectiveC, but if you make any changes
+to it that others could benefit from, I would greatly appreciate it if you
+contribute them back.
+
+In addition, if you use aiObjectiveC in your app, I'd love it if you could link
+to this project from somewhere (like your readme, about box, etc).
