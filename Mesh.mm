@@ -106,6 +106,8 @@
 
 - (void) render
 {
+    [[self material] apply];
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, buffers[BUFFER_VERTICES]);
     glVertexPointer(3, GL_FLOAT, 0, 0);
