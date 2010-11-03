@@ -35,6 +35,7 @@
             glBindTexture(GL_TEXTURE_2D, texture);
             if (![self loadTexture:texturePath])
             {
+                NSLog(@"Failed loading texture '%@'!", texturePath);
                 glDeleteTextures(1, &texture);
                 texture = 0;
             }
