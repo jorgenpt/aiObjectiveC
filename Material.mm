@@ -8,7 +8,7 @@
 
 #import "Material.h"
 
-#import "Cocoa/NSString+AI.h"
+#import "NSString+AI.h"
 
 #include "aiMaterial.h"
 
