@@ -1,5 +1,5 @@
 //
-//  Mesh.m
+//  Mesh.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 10/29/10.
@@ -102,6 +102,14 @@
     }
     
     return self;
+}
+
+- (void) dealloc
+{
+    [self setMaterial:nil];
+    glDeleteBuffers(NUMBER_OF_BUFFERS, buffers);
+
+    [super dealloc];
 }
 
 - (void) render

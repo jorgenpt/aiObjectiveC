@@ -16,6 +16,7 @@ struct aiMaterial;
 
 + (id) materialWithAsset:(const aiMaterial *)asset;
 - (id) initWithAsset:(const aiMaterial *)asset;
+- (void) dealloc;
 
 - (void) apply;
 - (BOOL) loadTexture:(NSString *)path;

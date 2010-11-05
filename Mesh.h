@@ -31,6 +31,7 @@ struct aiMesh;
             material:(Material *)theMaterial;
 - (id) initWithAsset:(const aiMesh *)asset
             material:(Material *)theMaterial;
+- (void) dealloc;
 
 - (void) render;
 

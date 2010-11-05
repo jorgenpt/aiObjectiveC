@@ -1,5 +1,5 @@
 //
-//  Scene.m
+//  Scene.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 10/29/10.

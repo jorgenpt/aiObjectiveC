@@ -1,5 +1,5 @@
 //
-//  Shader.m
+//  Shader.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 11/2/10.

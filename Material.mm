@@ -1,5 +1,5 @@
 //
-//  Material.m
+//  Material.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 10/30/10.
@@ -47,6 +47,14 @@
     }
 
     return self;
+}
+
+- (void) dealloc
+{
+    if (texture)
+        glDeleteTextures(1, &texture);
+
+    [super dealloc];
 }
 
 - (void) apply

@@ -1,5 +1,5 @@
 //
-//  NSString+AI.m
+//  NSString+AI.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 10/31/10.
