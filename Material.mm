@@ -25,15 +25,33 @@
     {
         if (asset->GetTextureCount(aiTextureType_DIFFUSE) > 0)
         {
+            aiTextureMapMode mapMode;
             // TODO: Support other kinds of textures and various kinds of multitexturing (logical operations)
             aiString *texturePathTmp = new aiString();
-            asset->GetTexture (aiTextureType_DIFFUSE, 0, texturePathTmp, NULL, NULL, NULL, NULL, NULL);
+            asset->GetTexture (aiTextureType_DIFFUSE, 0, texturePathTmp, NULL, NULL, NULL, NULL, &mapMode);
             NSString *texturePath = [NSString stringWithAIString:texturePathTmp];
-            delete texturePathTmp;
 
             glGenTextures(1, &texture);
             glBindTexture(GL_TEXTURE_2D, texture);
-            if (![self loadTexture:texturePath])
+            if ([self loadTexture:texturePath])
+            {
+                if (mapMode == aiTextureMapMode_Wrap)
+                {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                }
+                else if (mapMode == aiTextureMapMode_Clamp)
+                {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                }
+                else
+                {
+                    NSLog(@"Unsupported texturemapmode for %@: %i", texturePath, mapMode);
+                }
+
+            }
+            else
             {
                 NSLog(@"Failed loading texture '%@'!", texturePath);
                 glDeleteTextures(1, &texture);
@@ -75,7 +93,9 @@
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
     if (!image)
     {
-        return NO;
+        image = [[NSImage alloc] initWithContentsOfFile:[path lastPathComponent]];
+        if (!image)
+            return NO;
     }
 
     NSRect imageRect;
