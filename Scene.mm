@@ -10,6 +10,7 @@
 
 #import "Mesh.h"
 #import "Material.h"
+#import "Node.h"
 
 #include "assimp.h"
 
@@ -20,6 +21,7 @@
 
 @property (nonatomic, retain) NSArray *meshes;
 @property (nonatomic, retain) NSArray *materials;
+@property (nonatomic, retain) Node *rootNode;
 
 @end
 
@@ -27,6 +29,7 @@
 
 @synthesize meshes;
 @synthesize materials;
+@synthesize rootNode;
 
 + (id) sceneFromFile:(NSString *)file
 {
@@ -81,15 +84,15 @@
     [self setMaterials:newMaterials];
     [self setMeshes:newMeshes];
     
+    [self setRootNode:[Node nodeWithNode:scene->mRootNode
+                                  meshes:meshes]];
+
     return YES;
 }
 
 - (void) render
 {
-    for (Mesh *mesh in [self meshes])
-    {
-        [mesh render];
-    }
+    [rootNode render];
 }
 
 @end

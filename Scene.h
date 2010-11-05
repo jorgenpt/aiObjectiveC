@@ -6,20 +6,21 @@
 //  Copyright 2010 devSoft. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
+@class Node;
 struct aiScene;
 
 @interface Scene : NSObject {
     NSArray *meshes;
     NSArray *materials;
+    Node *rootNode;
 }
 
 + (id) sceneFromFile:(NSString *)file;
 - (id) initFromFile:(NSString *)file;
 - (void) dealloc;
 
-- (void) render;
 - (BOOL) loadScene:(const aiScene *)scene;
+
+- (void) render;
 
 @end
