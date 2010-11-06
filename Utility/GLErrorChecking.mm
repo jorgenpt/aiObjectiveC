@@ -11,12 +11,12 @@
 
 #import <OpenGL/glu.h>
 
-void _glClearErrors(const char *function, int line)
+void _glCheckAndClearErrors(const char *function, int line)
 {
     GLenum error;    
     while (error = glGetError())
     {
-        NSLog(@"%s, line %d: Warning, OpenGL error from previous code: %s", gluErrorString(error));
+        NSLog(@"%s, line %d: Error, OpenGL error: %s", gluErrorString(error));
     }
 }
 

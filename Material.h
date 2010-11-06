@@ -18,7 +18,8 @@ struct aiMaterial;
 - (id) initWithAsset:(const aiMaterial *)asset;
 - (void) dealloc;
 
-- (void) apply;
 - (BOOL) loadTexture:(NSString *)path;
+
+- (void) apply;
 
 @end

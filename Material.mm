@@ -9,6 +9,7 @@
 #import "Material.h"
 
 #import "NSString+AI.h"
+#import "GLErrorChecking.h"
 
 #include "aiMaterial.h"
 
@@ -23,6 +24,8 @@
 {
     if (self = [super init])
     {
+        glCheckAndClearErrors();
+
         if (asset->GetTextureCount(aiTextureType_DIFFUSE) > 0)
         {
             aiTextureMapMode mapMode;
@@ -33,7 +36,7 @@
 
             glGenTextures(1, &texture);
             glBindTexture(GL_TEXTURE_2D, texture);
-            if ([self loadTexture:texturePath])
+            if (!glHasError() && [self loadTexture:texturePath])
             {
                 if (mapMode == aiTextureMapMode_Wrap)
                 {
@@ -75,21 +78,10 @@
     [super dealloc];
 }
 
-- (void) apply
-{
-    if (texture)
-    {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
-    else
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-}
-
 - (BOOL) loadTexture:(NSString *)path
 {
+    glCheckAndClearErrors();
+
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
     if (!image)
     {
@@ -117,24 +109,43 @@
     int bitsPerPixel = [imageRep bitsPerPixel];
     BOOL hasAlpha = [imageRep hasAlpha];
 
-    // TODO: Check glGetError.
     GLenum format = hasAlpha ? GL_RGBA : GL_RGB;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glCheckAndClearErrors();
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerRow / (bitsPerPixel >> 3));
+    glCheckAndClearErrors();
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageRect.size.width,
                  imageRect.size.height, 0, format, GL_UNSIGNED_BYTE,
                  [imageRep bitmapData]);
     [imageRep release];
+    if (glHasError())
+    {
+        return NO;
+    }
 
     glGenerateMipmap(GL_TEXTURE_2D);
+    glCheckAndClearErrors();
 
     return YES;
+}
+
+- (void) apply
+{
+    if (texture)
+    {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
+    else
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
 }
 
 @end

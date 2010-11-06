@@ -19,15 +19,14 @@
                             fromString:shaderString] autorelease];
 }
 
-- (id) initWithType:(GLenum)theShaderType
+- (id) initWithType:(GLenum)shaderType
          fromString:(NSString *)shaderString
 {
     if (self = [super init])
     {
-        glClearErrors();
+        glCheckAndClearErrors();
 
-        shaderType = theShaderType;
-        shaderId = glCreateShader(theShaderType);
+        shaderId = glCreateShader(shaderType);
         if (!shaderId || glHasError())
         {
             [self release];
@@ -53,7 +52,7 @@
 
 - (NSString *) source
 {
-    glClearErrors();
+    glCheckAndClearErrors();
 
     GLint length;
     glGetShaderiv(shaderId, GL_SHADER_SOURCE_LENGTH, &length);
@@ -77,7 +76,7 @@
 
 - (BOOL) setSource:(NSString *)shaderString
 {
-    glClearErrors();
+    glCheckAndClearErrors();
 
     const char *source = [shaderString cStringUsingEncoding:NSASCIIStringEncoding];
     glShaderSource(shaderId, 1, &source, NULL);
@@ -99,7 +98,8 @@
 
 - (NSString *) log
 {
-    
+    glCheckAndClearErrors();
+
     GLint length;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &length);
     if (glHasError())
@@ -118,22 +118,6 @@
     free(logCstring);
     
     return log;
-}
-
-- (BOOL) attachToProgram:(GLuint)programId
-{
-    glClearErrors();
-    
-    glAttachShader(programId, shaderId);
-    return !glHasError();
-}
-
-- (BOOL) detachFromProgram:(GLuint)programId
-{
-    glClearErrors();
-    
-    glDetachShader(programId, shaderId);
-    return !glHasError();    
 }
 
 @end

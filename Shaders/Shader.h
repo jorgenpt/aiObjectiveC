@@ -7,14 +7,14 @@
 //
 
 @interface Shader : NSObject {
+@public
     GLuint shaderId;
-    GLenum shaderType;
 }
 
-+ (id) shaderOfType:(GLenum)theShaderType
++ (id) shaderOfType:(GLenum)shaderType
          fromString:(NSString *)shaderString;
 
-- (id) initWithType:(GLenum)theShaderType
+- (id) initWithType:(GLenum)shaderType
          fromString:(NSString *)shaderString;
 - (void) dealloc;
 
@@ -22,8 +22,5 @@
 - (BOOL) setSource:(NSString *)shaderString;
 
 - (NSString *) log;
-
-- (BOOL) attachToProgram:(GLuint)programId;
-- (BOOL) detachFromProgram:(GLuint)programId;
 
 @end
