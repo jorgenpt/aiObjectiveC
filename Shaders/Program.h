@@ -14,11 +14,10 @@
 
 #pragma mark -
 #pragma mark Object management
-+ (id) programWithVertex:(Shader *)vFrag
-                fragment:(Shader *)fFrag;
++ (id) programWithShaders:(Shader *)firstShader, ...;
 - (id) init;
-- (id) initWithVertex:(Shader *)vFrag
-             fragment:(Shader *)fFrag;
+- (id) initWithShaders:(Shader *)firstShader, ...;
+- (id) initWithShaderArray:(NSArray *)shaders;
 - (void) dealloc;
 
 #pragma mark -
@@ -28,6 +27,7 @@
 
 #pragma mark -
 #pragma mark Building a program
+- (BOOL) attachShaders:(NSArray *)shaders;
 - (BOOL) attachShader:(Shader *)shader;
 - (BOOL) detachShader:(Shader *)shader;
 - (BOOL) link;
