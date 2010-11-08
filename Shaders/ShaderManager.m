@@ -1,5 +1,5 @@
 //
-//  ShaderManager.mm
+//  ShaderManager.m
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 11/2/10.
@@ -55,7 +55,7 @@ static ShaderManager *defaultInstance = nil;
 {
     [self setVertexShaders:nil];
     [self setFragmentShaders:nil];
-    
+
     [super dealloc];
 }
 
@@ -89,12 +89,13 @@ static ShaderManager *defaultInstance = nil;
         return nil;
     }
     
+    NSError *error;
     NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath
                                                        encoding:NSASCIIStringEncoding
-                                                          error:nil];
+                                                          error:&error];
     if (!shaderString)
     {
-        NSLog(@"Attempted loading %@ shader %@ from file %@, but failed.", extension, name, shaderPath);
+        NSLog(@"Attempted loading %@ shader %@ from file %@, but failed: %@", extension, name, shaderPath, [error localizedDescription]);
         return nil;
     }
     
@@ -113,8 +114,9 @@ static ShaderManager *defaultInstance = nil;
                    andExtension:@"vert"
                   fromDirectory:@"Shaders/Vertex"];
 
-    [[self vertexShaders] setObject:shader
-                             forKey:name];
+    if (shader)
+        [[self vertexShaders] setObject:shader
+                                 forKey:name];
 
     return shader;
 }
@@ -131,8 +133,9 @@ static ShaderManager *defaultInstance = nil;
                    andExtension:@"frag"
                   fromDirectory:@"Shaders/Fragment"];
     
-    [[self fragmentShaders] setObject:shader
-                               forKey:name];
+    if (shader)
+        [[self fragmentShaders] setObject:shader
+                                   forKey:name];
     
     return shader;
 }

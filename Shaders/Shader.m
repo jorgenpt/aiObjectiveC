@@ -1,5 +1,5 @@
 //
-//  Shader.mm
+//  Shader.m
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 11/2/10.
@@ -46,7 +46,7 @@
 {
     if (shaderId)
         glDeleteShader(shaderId);
-    
+
     [super dealloc];
 }
 
@@ -58,7 +58,7 @@
     glGetShaderiv(shaderId, GL_SHADER_SOURCE_LENGTH, &length);
     if (glHasError())
         return nil;
-    
+
     GLchar *sourceCstring = (GLchar *)malloc(length * sizeof(GLchar));
     glGetShaderSource(shaderId, length * sizeof(GLchar), NULL, sourceCstring);
     if (glHasError())
@@ -80,18 +80,24 @@
 
     const char *source = [shaderString cStringUsingEncoding:NSASCIIStringEncoding];
     glShaderSource(shaderId, 1, &source, NULL);
-    
+
     if (glHasError())
         return NO;
-    
+
     glCompileShader(shaderId);
     if (glHasError())
         return NO;
-    
+
     GLint status;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
     if (glHasError())
         return NO;
+
+    if (status != GL_TRUE)
+    {
+        NSLog(@"Compilation failed: %@", [self log]);
+        return NO;
+    }
 
     return YES;
 }
@@ -104,7 +110,7 @@
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &length);
     if (glHasError())
         return nil;
-    
+
     GLchar *logCstring = (GLchar *)malloc(length * sizeof(GLchar));
     glGetShaderInfoLog(shaderId, length * sizeof(GLchar), NULL, logCstring);
     if (glHasError())
@@ -112,11 +118,11 @@
         free(logCstring);
         return nil;
     }
-    
+
     NSString *log = [NSString stringWithCString:logCstring
                                        encoding:NSASCIIStringEncoding];
     free(logCstring);
-    
+
     return log;
 }
 

@@ -1,5 +1,5 @@
 //
-//  Program.mm
+//  Program.m
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 11/2/10.
@@ -28,6 +28,7 @@ do { \
     NSMutableArray *args = [NSMutableArray array];
     if (firstShader)
     {
+        [args addObject:firstShader];
         va_list shaders;
         va_start(shaders, firstShader);
         NSARRAY_FROM_NIL_TERMINATED_ID_VA(shaders, args);
@@ -46,6 +47,7 @@ do { \
         if (!programId)
         {
             glCheckAndClearErrors();
+            NSLog(@"Could not create program!");
             [self release];
             self = nil;
         }
@@ -59,6 +61,7 @@ do { \
     NSMutableArray *args = [NSMutableArray array];
     if (firstShader)
     {
+        [args addObject:firstShader];
         va_list shaders;
         va_start(shaders, firstShader);
         NSARRAY_FROM_NIL_TERMINATED_ID_VA(shaders, args);

@@ -9,7 +9,7 @@
 @class Shader;
 
 @interface ShaderManager : NSObject {
-    NSMutableDictionary *vertexShaders, *fragmentShaders;
+    NSMutableDictionary *vertexShaders, *fragmentShaders, *programs;
 }
 
 + (id) defaultShaderManager;
