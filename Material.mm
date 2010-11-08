@@ -82,12 +82,15 @@
 {
     glCheckAndClearErrors();
 
-    NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    NSString *filename = [path lastPathComponent];
+    NSString *texturePath = [[NSBundle mainBundle] pathForResource:filename
+                                                            ofType:@""
+                                                       inDirectory:@"Textures"];
+
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:texturePath];
     if (!image)
     {
-        image = [[NSImage alloc] initWithContentsOfFile:[path lastPathComponent]];
-        if (!image)
-            return NO;
+        return NO;
     }
 
     NSRect imageRect;

@@ -40,7 +40,12 @@
 {
     if (self = [super init])
     {
-        const aiScene *scene = aiImportFile([file cStringUsingEncoding:NSUTF8StringEncoding], aiProcessPreset_TargetRealtime_Quality);
+        NSString *filename = [file lastPathComponent];
+        NSString *scenePath = [[NSBundle mainBundle] pathForResource:filename
+                                                              ofType:@""
+                                                         inDirectory:@"Scenes"];
+
+        const aiScene *scene = aiImportFile([scenePath cStringUsingEncoding:NSUTF8StringEncoding], aiProcessPreset_TargetRealtime_Quality);
         if (![self loadScene:scene])
         {
             [self release];
@@ -83,7 +88,7 @@
 
     [self setMaterials:newMaterials];
     [self setMeshes:newMeshes];
-    
+
     [self setRootNode:[Node nodeWithNode:scene->mRootNode
                                   meshes:meshes]];
 
