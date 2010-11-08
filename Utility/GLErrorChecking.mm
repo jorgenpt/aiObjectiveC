@@ -14,7 +14,7 @@
 void _glCheckAndClearErrors(const char *function, int line)
 {
     GLenum error;    
-    while (error = glGetError())
+    while ((error = glGetError()) != GL_NO_ERROR)
     {
         NSLog(@"%s, line %d: Error, OpenGL error: %s", gluErrorString(error));
     }
@@ -25,7 +25,7 @@ BOOL _glHasError(const char *function, int line)
     GLenum error;
     BOOL errors = NO;
 
-    while (error = glGetError())
+    while ((error = glGetError()) != GL_NO_ERROR)
     {
         errors = YES;
         NSLog(@"%s, line %d: Error, OpenGL error: %s", gluErrorString(error));
