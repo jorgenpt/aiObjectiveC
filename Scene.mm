@@ -46,11 +46,19 @@
                                                          inDirectory:@"Scenes"];
 
         const aiScene *scene = aiImportFile([scenePath cStringUsingEncoding:NSUTF8StringEncoding], aiProcessPreset_TargetRealtime_Quality);
-        if (![self loadScene:scene])
+        if (!scene)
         {
+            NSLog(@"Could not load scene from path: %@", scenePath);
             [self release];
             self = nil;
         }
+        else if (![self loadScene:scene])
+        {
+            NSLog(@"Could not create data structure for scene %@", filename);
+            [self release];
+            self = nil;
+        }
+
         if (scene)
             aiReleaseImport(scene);
     }

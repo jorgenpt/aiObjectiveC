@@ -6,15 +6,15 @@
 //  Copyright 2010 devSoft. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 enum BufferObjects {
     BUFFER_INDICES,
     BUFFER_VERTICES,
     BUFFER_COLORS,
     BUFFER_NORMALS,
     BUFFER_TEXTURE_COORDS,
-    
+    BUFFER_TANGENTS,
+    BUFFER_BINORMALS,
+
     NUMBER_OF_BUFFERS
 };
 

@@ -1,6 +1,4 @@
-varying vec3 normal;
-
-vec4 light_model(in int light, in vec4 base_color)
+vec4 phong_point(in int light, in vec4 base_color, in vec3 normal)
 {
     vec3 N = normalize(normal);
     vec3 H = normalize(gl_LightSource[0].halfVector.xyz);

@@ -6,19 +6,25 @@
 //  Copyright 2010 devSoft. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+@class Program;
 
-struct aiMaterial;
+#include "aiMaterial.h"
 
 @interface Material : NSObject {
-    GLuint texture;
+    GLuint texture, bumpmap;
+    Program *shader;
 }
+
+@property (nonatomic, retain) Program *shader;
 
 + (id) materialWithAsset:(const aiMaterial *)asset;
 - (id) initWithAsset:(const aiMaterial *)asset;
 - (void) dealloc;
 
 - (BOOL) loadTexture:(NSString *)path;
+- (GLuint) texture:(int)num
+            ofType:(aiTextureType)type
+         fromAsset:(const aiMaterial *)asset;
 
 - (void) apply;
 

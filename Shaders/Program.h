@@ -38,4 +38,9 @@
 + (void) unbind;
 - (void) unbind;
 
+- (void) setUniform:(NSString *)name
+          toFloat:(float)value;
+- (void) setUniform:(NSString *)name
+          toInt:(int)value;
+
 @end

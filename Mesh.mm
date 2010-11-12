@@ -38,7 +38,7 @@
         assert(asset->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
 
         numTris = asset->mNumFaces;
-        
+
         glGenBuffers(NUMBER_OF_BUFFERS, buffers);
 
         // Set up index buffer.
@@ -57,11 +57,11 @@
             }
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, asset->mNumFaces * sizeof(unsigned int) * 3, indices, GL_STATIC_DRAW);
         }
-        
+
         // Set up vertex buffer
         glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_VERTICES]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(aiVector3D) * asset->mNumVertices, asset->mVertices, GL_STATIC_DRAW);
-        
+
         // Optionally set up color buffer.
         // TODO: Support more than 1 set of colors.
         if (asset->mColors[0])
@@ -99,8 +99,23 @@
             glDeleteBuffers(1, &(buffers[BUFFER_TEXTURE_COORDS]));
             buffers[BUFFER_TEXTURE_COORDS] = 0;
         }
+
+        // Optionally set up the bitangent & tangent buffer.
+        if (asset->HasTangentsAndBitangents())
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_BINORMALS]);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(aiVector3D) * asset->mNumVertices, asset->mBitangents, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_TANGENTS]);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(aiVector3D) * asset->mNumVertices, asset->mTangents, GL_STATIC_DRAW);
+        }
+        else
+        {
+            glDeleteBuffers(1, &(buffers[BUFFER_BINORMALS]));
+            glDeleteBuffers(1, &(buffers[BUFFER_TANGENTS]));
+            buffers[BUFFER_BINORMALS] = buffers[BUFFER_TANGENTS] = 0;
+        }
     }
-    
+
     return self;
 }
 
@@ -119,7 +134,7 @@
     glEnableClientState(GL_VERTEX_ARRAY);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, buffers[BUFFER_VERTICES]);
     glVertexPointer(3, GL_FLOAT, 0, 0);
-    
+
     if (buffers[BUFFER_COLORS])
     {
         glEnableClientState(GL_COLOR_ARRAY);
@@ -130,7 +145,7 @@
     {
         glDisableClientState(GL_COLOR_ARRAY);
     }
-    
+
     if (buffers[BUFFER_NORMALS])
     {
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -142,15 +157,34 @@
         glDisableClientState(GL_NORMAL_ARRAY);
     }
 
-    if (buffers[BUFFER_TEXTURE_COORDS])
+    if (buffers[BUFFER_TEXTURE_COORDS] || buffers[BUFFER_BINORMALS] || buffers[BUFFER_TANGENTS])
     {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_TEXTURE_COORDS]);
-        glTexCoordPointer(3, GL_FLOAT, 0, 0);
     }
     else
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    if (buffers[BUFFER_TEXTURE_COORDS])
+    {
+        glClientActiveTexture(GL_TEXTURE0);
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_TEXTURE_COORDS]);
+        glTexCoordPointer(3, GL_FLOAT, 0, 0);
+    }
+
+    if (buffers[BUFFER_TANGENTS])
+    {
+        glClientActiveTexture(GL_TEXTURE1);
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_TANGENTS]);
+        glTexCoordPointer(3, GL_FLOAT, 0, 0);
+    }
+
+    if (buffers[BUFFER_BINORMALS])
+    {
+        glClientActiveTexture(GL_TEXTURE2);
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_BINORMALS]);
+        glTexCoordPointer(3, GL_FLOAT, 0, 0);
     }
 
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, buffers[BUFFER_INDICES]);

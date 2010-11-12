@@ -47,7 +47,7 @@ static ShaderManager *defaultInstance = nil;
         [self setVertexShaders:[NSMutableDictionary dictionary]];
         [self setFragmentShaders:[NSMutableDictionary dictionary]];
     }
-    
+
     return self;
 }
 
@@ -88,7 +88,7 @@ static ShaderManager *defaultInstance = nil;
         NSLog(@"Attempted loading %@ shader that wasn't found: %@", extension, name);
         return nil;
     }
-    
+
     NSError *error;
     NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath
                                                        encoding:NSASCIIStringEncoding
@@ -98,7 +98,7 @@ static ShaderManager *defaultInstance = nil;
         NSLog(@"Attempted loading %@ shader %@ from file %@, but failed: %@", extension, name, shaderPath, [error localizedDescription]);
         return nil;
     }
-    
+
     return [Shader shaderOfType:type
                     fromString:shaderString];
 }
@@ -117,26 +117,30 @@ static ShaderManager *defaultInstance = nil;
     if (shader)
         [[self vertexShaders] setObject:shader
                                  forKey:name];
+    else
+            NSLog(@"Could not build vert shader %@", name);
 
     return shader;
 }
 
 - (Shader *) fragmentShader:(NSString *)name;
 {
-    
+
     Shader *shader = [[self fragmentShaders] objectForKey:name];
     if (shader)
         return [[shader retain] autorelease];
-    
+
     shader = [self shaderOfType:GL_FRAGMENT_SHADER
                        withName:name
                    andExtension:@"frag"
                   fromDirectory:@"Shaders/Fragment"];
-    
+
     if (shader)
         [[self fragmentShaders] setObject:shader
                                    forKey:name];
-    
+    else
+        NSLog(@"Could not build frag shader %@", name);
+
     return shader;
 }
 

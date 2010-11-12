@@ -239,4 +239,33 @@ do { \
     [[self class] unbind];
 }
 
+- (void) setUniform:(NSString *)name
+            toFloat:(float)value
+{
+#ifdef DEBUG
+    glCheckAndClearErrors();
+#endif
+
+    glUseProgram(programId);
+    glUniform1f(glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]), value);
+
+#ifdef DEBUG
+    glCheckAndClearErrors();
+#endif
+}
+
+- (void) setUniform:(NSString *)name
+              toInt:(int)value
+{
+#ifdef DEBUG
+    glCheckAndClearErrors();
+#endif
+
+    glUseProgram(programId);
+    glUniform1i(glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]), value);
+
+#ifdef DEBUG
+    glCheckAndClearErrors();
+#endif
+}
 @end
