@@ -45,6 +45,15 @@
                           fromAsset:asset];
         }
 
+        // TODO: This should be changed in a couple of ways (which would modify the way the shader/program system works).
+        // 1) Reduce programs to 1 shader for each kind. This makes it work on OpenGL ES.
+        //    (with a possible "utility shader" being added to the source of each shader, or just the possibility of
+        //     using multiple files per shader). 
+        // 2) Reduce the number of files use to make each shader to 1.
+        // 3) Use a capabilities-based system where you can register a vert/frag shader pair and a bitmask
+        //    that lists what it supports. (TEXTURING, TEXTURING | BUMPMAPPING, etc) Use that to
+        //    figure out the "best match" for a shader for this material (Whatever bitmask includes the required fags
+        //    and the least amount of additional capabilities).
         ShaderManager *sm = [ShaderManager defaultShaderManager];
         if (bumpmap)
         {
