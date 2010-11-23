@@ -9,7 +9,11 @@
 #import "Mesh.h"
 
 #import "Material.h"
+#import "Program.h"
+#import "NSString+AI.h"
+#import "GLErrorChecking.h"
 
+#include "assimp.h"
 #include "aiMesh.h"
 
 @interface Mesh ()
@@ -100,6 +104,34 @@
             buffers[BUFFER_TEXTURE_COORDS] = 0;
         }
 
+        for (int i = 0; i < MAX_NUMBER_OF_BONES; ++i)
+            aiIdentityMatrix4(&boneOffsets[i]);
+
+        // Optionally set up bones!
+        if (asset->HasBones())
+        {
+            for (int i = 0; i < asset->mNumBones; ++i)
+            {
+                aiBone *bone = asset->mBones[i];
+                boneOffsets[i] = bone->mOffsetMatrix;
+                float *weights = (float *)calloc(asset->mNumVertices, sizeof(float));
+                for (int j = 0; j < bone->mNumWeights; ++j)
+                {
+                    aiVertexWeight &v = bone->mWeights[j];
+                    weights[v.mVertexId] = v.mWeight;
+                }
+
+                glBindBuffer(GL_ARRAY_BUFFER, buffers[BUFFER_BONEWEIGHTS + i]);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * asset->mNumVertices, weights, GL_STATIC_DRAW);
+                free(weights);
+            }
+        }
+
+        int numberOfUnusedBones = MAX_NUMBER_OF_BONES - asset->mNumBones;
+        GLuint *firstUnusedBone = &(buffers[BUFFER_BONEWEIGHTS + asset->mNumBones]);
+        glDeleteBuffers(numberOfUnusedBones, firstUnusedBone);
+        memset(firstUnusedBone, 0, numberOfUnusedBones * sizeof(GLuint));
+
         // Optionally set up the bitangent & tangent buffer.
         if (asset->HasTangentsAndBitangents())
         {
@@ -129,6 +161,8 @@
 
 - (void) render
 {
+    glCheckAndClearErrorsIfDEBUG();
+
     [[self material] apply];
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -187,11 +221,36 @@
         glTexCoordPointer(3, GL_FLOAT, 0, 0);
     }
 
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, buffers[BUFFER_INDICES]);
+    Program *shader = [[self material] shader];
+    for (int i = 0; i < MAX_NUMBER_OF_BONES; ++i)
+    {
+        NSString *attribute = [NSString stringWithFormat:@"boneweights%i", i];
+        GLint location = [shader attributeLocation:attribute];
+        glCheckAndClearErrorsIfDEBUG();
+
+        if (location < 0)
+            continue;
+
+        GLuint buffer = buffers[BUFFER_BONEWEIGHTS + i];
+        if (buffer)
+        {
+            glEnableVertexAttribArray(location);
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
+            glVertexAttribPointer(location, 1, GL_FLOAT, GL_FALSE, 0, 0);
+        }
+        else
+        {
+            glDisableVertexAttribArray(location);
+        }
+
+        glCheckAndClearErrorsIfDEBUG();
+    }
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, buffers[BUFFER_INDICES]);
     glDrawElements(GL_TRIANGLES, numTris * 3, GL_UNSIGNED_INT, 0);
 
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+    glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
 @end
