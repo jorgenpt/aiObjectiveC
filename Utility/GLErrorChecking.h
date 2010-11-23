@@ -7,6 +7,12 @@
  *
  */
 
+#ifdef DEBUG
+# define glCheckAndClearErrorsIfDEBUG() glCheckAndClearErrors()
+#else
+# define glCheckAndClearErrorsIfDEBUG()
+#endif
+
 #define glCheckAndClearErrors() (_glCheckAndClearErrors(__PRETTY_FUNCTION__, __LINE__))
 #define glHasError()    (_glHasError(__PRETTY_FUNCTION__, __LINE__))
 

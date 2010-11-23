@@ -199,6 +199,8 @@
 
 - (void) apply
 {
+    glCheckAndClearErrorsIfDEBUG();
+
     if (texture || bumpmap)
     {
         glEnable(GL_TEXTURE_2D);
@@ -208,17 +210,23 @@
         glDisable(GL_TEXTURE_2D);
     }
 
+    glCheckAndClearErrorsIfDEBUG();
+
     if (texture)
     {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
+    glCheckAndClearErrorsIfDEBUG();
+
     if (bumpmap)
     {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, bumpmap);
     }
+
+    glCheckAndClearErrorsIfDEBUG();
 
     [shader bind];
 }
