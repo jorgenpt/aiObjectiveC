@@ -8,6 +8,8 @@
 
 @class Shader;
 
+struct aiMatrix4x4;
+
 @interface Program : NSObject {
     GLuint programId;
 }
@@ -42,5 +44,16 @@
           toFloat:(float)value;
 - (void) setUniform:(NSString *)name
           toInt:(int)value;
+
+- (void) setUniform:(NSString *)name
+           toFloats:(float *)values
+   havingComponents:(int)components
+          withCount:(int)count;
+
+- (void) setUniform:(NSString *)name
+      to4x4Matrices:(aiMatrix4x4 *)values
+          withCount:(int)count;
+
+- (GLint) attributeLocation:(NSString *)name;
 
 @end

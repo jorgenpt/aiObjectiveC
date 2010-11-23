@@ -11,6 +11,8 @@
 #import "Shader.h"
 #import "GLErrorChecking.h"
 
+#include "aiTypes.h"
+
 #define NSARRAY_FROM_NIL_TERMINATED_ID_VA(list, array) \
 do { \
     id object; \
@@ -202,6 +204,17 @@ do { \
         return NO;
     }
 
+    GLint activeAttributes;
+    glGetProgramiv(programId, GL_ACTIVE_ATTRIBUTES, &activeAttributes);
+    for (int i = 0; i < activeAttributes; ++i)
+    {
+        char name[512];
+        GLint size;
+        GLenum type;
+        glGetActiveAttrib(programId, i, 512, NULL, &size, &type, name);
+        NSLog(@"%i = %s (%i components, type %i)", i, name, size, type);
+    }
+
     return YES;
 }
 
@@ -210,28 +223,20 @@ do { \
 
 - (void) bind
 {
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 
     glUseProgram(programId);
 
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 }
 
 + (void) unbind
 {
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 
     glUseProgram(0);
 
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 }
 
 - (void) unbind
@@ -242,30 +247,80 @@ do { \
 - (void) setUniform:(NSString *)name
             toFloat:(float)value
 {
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 
     glUseProgram(programId);
     glUniform1f(glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]), value);
 
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 }
 
 - (void) setUniform:(NSString *)name
               toInt:(int)value
 {
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 
     glUseProgram(programId);
     glUniform1i(glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]), value);
 
-#ifdef DEBUG
-    glCheckAndClearErrors();
-#endif
+    glCheckAndClearErrorsIfDEBUG();
 }
+
+- (void) setUniform:(NSString *)name
+           toFloats:(float *)values
+   havingComponents:(int)components
+          withCount:(int)count
+{
+    glCheckAndClearErrorsIfDEBUG();
+
+    glUseProgram(programId);
+    GLint location = glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]);
+    switch (components)
+    {
+        case 1:
+            glUniform1fv(location, count, values);
+            break;
+        case 2:
+            glUniform2fv(location, count, values);
+            break;
+        case 3:
+            glUniform3fv(location, count, values);
+            break;
+        case 4:
+            glUniform4fv(location, count, values);
+            break;
+        default:
+            NSLog(@"What!");
+            break;
+    }
+
+    glCheckAndClearErrorsIfDEBUG();
+}
+
+- (void) setUniform:(NSString *)name
+      to4x4Matrices:(aiMatrix4x4 *)values
+           withCount:(int)count
+{
+    glCheckAndClearErrorsIfDEBUG();
+
+    glUseProgram(programId);
+    GLint location = glGetUniformLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]);
+
+    // GL_TRUE means we transpose the matrices, because assimp uses column-major layout.
+    glUniformMatrix4fv(location, count, GL_TRUE, (GLfloat *)values);
+
+    glCheckAndClearErrorsIfDEBUG();
+}
+
+- (GLint) attributeLocation:(NSString *)name
+{
+    glCheckAndClearErrorsIfDEBUG();
+
+    glUseProgram(programId);
+    GLint location = glGetAttribLocation(programId, [name cStringUsingEncoding:NSASCIIStringEncoding]);
+
+    glCheckAndClearErrorsIfDEBUG();
+    return location;
+}
+
 @end
