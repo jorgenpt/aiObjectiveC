@@ -28,6 +28,10 @@ Finally, aiObjectiveC is meant as a starting ground for people wanting to write
 OpenGL apps for Mac / iOS that leverage assimp. You might not want to use my
 library verbatim, but hopefully it'll help you get started!
 
+This is currently considered a prototype, and a C++ API based on this will
+probably be developed after it stabilizes a bit. This is in order to have a
+platform-independent way of working with assimp and OpenGL.
+
 
 License
 =======
