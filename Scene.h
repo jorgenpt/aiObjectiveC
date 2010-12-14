@@ -13,7 +13,10 @@ struct aiScene;
     NSArray *meshes;
     NSArray *materials;
     Node *rootNode;
+    NSDictionary *animations;
 }
+
+@property (nonatomic, retain) NSDictionary *animations;
 
 + (id) sceneFromFile:(NSString *)file;
 - (id) initFromFile:(NSString *)file;

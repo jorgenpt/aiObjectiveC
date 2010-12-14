@@ -11,6 +11,9 @@
 #import "Mesh.h"
 #import "Material.h"
 #import "Node.h"
+#import "Animation.h"
+
+#import "NSString+AI.h"
 
 #include "assimp.h"
 
@@ -30,6 +33,7 @@
 @synthesize meshes;
 @synthesize materials;
 @synthesize rootNode;
+@synthesize animations;
 
 + (id) sceneFromFile:(NSString *)file
 {
@@ -99,6 +103,15 @@
 
     [self setRootNode:[Node nodeWithNode:scene->mRootNode
                                   meshes:meshes]];
+
+    NSMutableDictionary* newAnimations = [NSMutableDictionary dictionaryWithCapacity:scene->mNumAnimations];
+    for (int i = 0; i < scene->mNumAnimations; ++i)
+    {
+        aiAnimation *animation = scene->mAnimations[i];
+        [newAnimations setObject:[Animation animationWithAsset:animation]
+                          forKey:[NSString stringWithAIString:&animation->mName]];
+    }
+    [self setAnimations:newAnimations];
 
     return YES;
 }
