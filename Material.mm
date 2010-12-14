@@ -11,13 +11,9 @@
 #import "NSString+AI.h"
 #import "GLErrorChecking.h"
 
-#import "Shader.h"
-#import "Program.h"
-#import "ShaderManager.h"
-
 @implementation Material
 
-@synthesize shader;
+@synthesize texture, bumpmap;
 
 + (id) materialWithAsset:(const aiMaterial *)asset
 {
@@ -44,42 +40,6 @@
                              ofType:aiTextureType_HEIGHT
                           fromAsset:asset];
         }
-
-        // TODO: This should be changed in a couple of ways (which would modify the way the shader/program system works).
-        // 1) Reduce programs to 1 shader for each kind. This makes it work on OpenGL ES.
-        //    (with a possible "utility shader" being added to the source of each shader, or just the possibility of
-        //     using multiple files per shader). 
-        // 2) Reduce the number of files use to make each shader to 1.
-        // 3) Use a capabilities-based system where you can register a vert/frag shader pair and a bitmask
-        //    that lists what it supports. (TEXTURING, TEXTURING | BUMPMAPPING, etc) Use that to
-        //    figure out the "best match" for a shader for this material (Whatever bitmask includes the required fags
-        //    and the least amount of additional capabilities).
-        ShaderManager *sm = [ShaderManager defaultShaderManager];
-        if (bumpmap)
-        {
-            Program *program = [Program programWithShaders:
-                                [sm vertexShader:@"bump"], [sm fragmentShader:@"base"],
-                                [sm fragmentShader:@"one_light"], [sm fragmentShader:@"perpixel_phong_point"],
-                                [sm fragmentShader:@"lightmodel_bump"], [sm fragmentShader:@"simple_texturing"], nil];
-            [program setUniform:@"normalMap" toInt:1];
-            [self setShader:program];
-        }
-        else if (texture)
-        {
-            Program *program = [Program programWithShaders:
-                                [sm vertexShader:@"base"], [sm fragmentShader:@"base"],
-                                [sm fragmentShader:@"one_light"], [sm fragmentShader:@"perpixel_phong_point"],
-                                [sm fragmentShader:@"lightmodel_simple"], [sm fragmentShader:@"simple_texturing"], nil];
-            [self setShader:program];
-        }
-        else
-        {
-            Program *program = [Program programWithShaders:
-                                [sm vertexShader:@"base"], [sm fragmentShader:@"base"],
-                                [sm fragmentShader:@"one_light"], [sm fragmentShader:@"perpixel_phong_point"],
-                                [sm fragmentShader:@"lightmodel_simple"], [sm fragmentShader:@"simple_texturing"], nil];
-            [self setShader:program];
-        }
     }
 
     return self;
@@ -92,7 +52,6 @@
     if (bumpmap)
         glDeleteTextures(1, &bumpmap);
 
-    [self setShader:nil];
     [super dealloc];
 }
 
@@ -227,8 +186,6 @@
     }
 
     glCheckAndClearErrorsIfDEBUG();
-
-    [shader bind];
 }
 
 @end

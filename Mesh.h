@@ -26,7 +26,7 @@ enum BufferObjects {
 };
 
 struct aiMesh;
-@class Material;
+@class Material, Program;
 
 @interface Mesh : NSObject {
     aiMatrix4x4 boneOffsets[MAX_NUMBER_OF_BONES];
@@ -34,7 +34,10 @@ struct aiMesh;
     GLuint buffers[NUMBER_OF_BUFFERS];
     GLuint numTris;
     Material *material;
+    Program *shader;
 }
+
+@property (nonatomic, retain) Program *shader;
 
 + (id) meshWithAsset:(const aiMesh *)asset
             material:(Material *)theMaterial;

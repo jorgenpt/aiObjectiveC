@@ -12,10 +12,9 @@
 
 @interface Material : NSObject {
     GLuint texture, bumpmap;
-    Program *shader;
 }
 
-@property (nonatomic, retain) Program *shader;
+@property (readonly) GLuint texture, bumpmap;
 
 + (id) materialWithAsset:(const aiMaterial *)asset;
 - (id) initWithAsset:(const aiMaterial *)asset;

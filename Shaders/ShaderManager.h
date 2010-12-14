@@ -6,7 +6,8 @@
 //  Copyright 2010 devSoft. All rights reserved.
 //
 
-@class Shader;
+@class Shader, Program;
+@class Mesh, Material;
 
 @interface ShaderManager : NSObject {
     NSMutableDictionary *vertexShaders, *fragmentShaders, *programs;
@@ -22,5 +23,8 @@
 
 - (Shader *) vertexShader:(NSString *)name;
 - (Shader *) fragmentShader:(NSString *)name;
+
+- (Program *) shaderForMesh:(Mesh *)mesh
+                   material:(Material *)material;
 
 @end

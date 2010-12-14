@@ -1,5 +1,5 @@
 //
-//  ShaderManager.m
+//  ShaderManager.mm
 //  aiObjectiveC
 //
 //  Created by Jørgen P. Tjernø on 11/2/10.
@@ -8,7 +8,10 @@
 
 #import "ShaderManager.h"
 
+#import "Program.h"
 #import "Shader.h"
+#import "Material.h"
+#import "Mesh.h"
 
 static ShaderManager *defaultInstance = nil;
 
@@ -142,6 +145,12 @@ static ShaderManager *defaultInstance = nil;
         NSLog(@"Could not build frag shader %@", name);
 
     return shader;
+}
+
+- (Program *) shaderForMesh:(Mesh *)mesh
+                   material:(Material *)material
+{
+    return nil;
 }
 
 @end

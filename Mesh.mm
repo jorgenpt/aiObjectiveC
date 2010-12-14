@@ -9,7 +9,9 @@
 #import "Mesh.h"
 
 #import "Material.h"
+#import "Shader.h"
 #import "Program.h"
+#import "ShaderManager.h"
 #import "NSString+AI.h"
 #import "GLErrorChecking.h"
 
@@ -23,6 +25,7 @@
 @implementation Mesh
 
 @synthesize material;
+@synthesize shader;
 
 + (id) meshWithAsset:(const aiMesh *)asset
             material:(Material *)theMaterial
@@ -146,6 +149,9 @@
             glDeleteBuffers(1, &(buffers[BUFFER_TANGENTS]));
             buffers[BUFFER_BINORMALS] = buffers[BUFFER_TANGENTS] = 0;
         }
+
+        [self setShader:[[ShaderManager defaultShaderManager] shaderForMesh:self
+                                                                   material:theMaterial]];
     }
 
     return self;
@@ -163,7 +169,8 @@
 {
     glCheckAndClearErrorsIfDEBUG();
 
-    [[self material] apply];
+    [shader bind];
+    [material apply];
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, buffers[BUFFER_VERTICES]);
@@ -221,7 +228,6 @@
         glTexCoordPointer(3, GL_FLOAT, 0, 0);
     }
 
-    Program *shader = [[self material] shader];
     for (int i = 0; i < MAX_NUMBER_OF_BONES; ++i)
     {
         NSString *attribute = [NSString stringWithFormat:@"boneweights%i", i];
